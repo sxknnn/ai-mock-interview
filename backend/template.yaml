@@ -17,8 +17,8 @@ Parameters:
     Description: Comma-separated list of allowed token `azp` values (your frontend origin(s)).
     Default: ""
   AllowedOrigin:
-    Type: String
-    Description: Frontend origin allowed by CORS on the Function URL.
+    Type: CommaDelimitedList
+    Description: Comma-separated frontend origin(s) allowed by CORS on the Function URL.
     Default: "http://localhost:5173"
   GeminiApiKey:
     Type: String
@@ -95,8 +95,7 @@ Resources:
       FunctionUrlConfig:
         AuthType: NONE # auth is enforced inside Django via Clerk JWT verification
         Cors:
-          AllowOrigins:
-            - !Ref AllowedOrigin
+          AllowOrigins: !Ref AllowedOrigin
           AllowMethods: [GET, POST] # Lambda Function URLs handle OPTIONS preflight automatically
           AllowHeaders: [authorization, content-type]
           MaxAge: 300
