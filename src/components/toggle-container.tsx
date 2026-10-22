@@ -30,8 +30,8 @@ import {
                 to={"/generate"}
                 className={({ isActive }) =>
                   cn(
-                    "text-base text-neutral-600 ",
-                    isActive && "text-neutral-900 font-semibold"
+                    "text-base text-muted-foreground hover:text-foreground transition-colors ",
+                    isActive && "text-foreground font-semibold"
                   )
                 }
               >

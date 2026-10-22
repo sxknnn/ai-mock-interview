@@ -22,22 +22,22 @@ const HomePage = () => {
 
         {/* Stats Section */}
         <div className="flex w-full items-center justify-evenly md:px-12 md:py-16 md:items-center md:justify-end gap-12">
-          <p className="text-3xl font-semibold text-gray-900 text-center">
-            250k+
-            <span className="block text-xl text-muted-foreground font-normal">
-              Offers Received
+          <p className="font-heading text-3xl font-bold text-foreground text-center">
+            70+
+            <span className="block font-sans text-xl text-muted-foreground font-normal">
+              Roles to practice
             </span>
           </p>
-          <p className="text-3xl font-semibold text-gray-900 text-center">
-            1.2M+
-            <span className="block text-xl text-muted-foreground font-normal">
-              Interviews Aced
+          <p className="font-heading text-3xl font-bold text-foreground text-center">
+            Instant
+            <span className="block font-sans text-xl text-muted-foreground font-normal">
+              AI-graded feedback
             </span>
           </p>
         </div>
 
         {/* Image Section with smaller max width */}
-        <div className="w-full mt-4 rounded-xl bg-gray-100 h-[420px] drop-shadow-md overflow-hidden relative">
+        <div className="w-full mt-4 rounded-xl bg-muted h-[420px] drop-shadow-md overflow-hidden relative">
           <img
             src="/assets/img/ai.webp"
             alt="AI Interview Assistant"
@@ -53,12 +53,12 @@ const HomePage = () => {
           </div>
 
 {/* Developer Card */}
-<div className="hidden md:block absolute bottom-4 right-4 max-w-sm p-6 rounded-2xl bg-white/80 backdrop-blur-md shadow-2xl border border-gray-200">
-  <h2 className="text-xl font-bold text-neutral-800 mb-2 flex items-center gap-2">
+<div className="hidden md:block absolute bottom-4 right-4 max-w-sm p-6 rounded-2xl bg-card/85 backdrop-blur-md shadow-2xl border">
+  <h2 className="text-xl font-bold text-card-foreground mb-2 flex items-center gap-2">
     <Sparkles className="text-yellow-500 w-5 h-5" />
     AI Developer Copilot
   </h2>
-  <p className="text-sm text-neutral-600 mb-4 leading-relaxed">
+  <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
     Transform the way you prepare. Gain confidence and boost your chances of landing your dream job with smart, AI-powered interview practice.
   </p>
   <Link to="/generate" className="block w-full">
@@ -72,21 +72,22 @@ const HomePage = () => {
       </Container>
 
       {/** marq section */}
-      <div className="w-full my-12">
+      <div className="w-full my-12 space-y-4">
+        <p className="text-center text-sm font-medium uppercase tracking-widest text-muted-foreground">
+          Built with
+        </p>
         <Marquee pauseOnHover>
-          <MarqueImg img="/assets/img/logo/firebase.png" />
-          <MarqueImg img="/assets/img/logo/meet.png" />
-          <MarqueImg img="/assets/img/logo/zoom.png" />
-          <MarqueImg img="/assets/img/logo/firebase.png" />
-          <MarqueImg img="/assets/img/logo/microsoft.png" />
-          <MarqueImg img="/assets/img/logo/meet.png" />
+          <MarqueImg img="/assets/img/logo/react.png" />
           <MarqueImg img="/assets/img/logo/tailwindcss.png" />
-          <MarqueImg img="/assets/img/logo/microsoft.png" />
+          <MarqueImg img="/assets/img/logo/firebase.png" />
+          <MarqueImg img="/assets/img/logo/react.png" />
+          <MarqueImg img="/assets/img/logo/tailwindcss.png" />
+          <MarqueImg img="/assets/img/logo/firebase.png" />
 
         </Marquee>
       </div>
       <Container className="py-8 space-y-8">
-        <h2 className="tracking-wide text-xl text-gray-800 font-semibold">
+        <h2 className="text-2xl text-foreground font-semibold">
           Unleash your potential with personalized AI insights and targeted
           interview practice.
         </h2>

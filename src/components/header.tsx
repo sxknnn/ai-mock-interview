@@ -6,13 +6,14 @@ import {NavigationRoutes}   from "./navigation-routes";
 import { NavLink } from "react-router-dom";
 import { ProfileContainer } from "./profile-container";
 import { ToggleContainer } from "./toggle-container";
+import { ThemeToggle } from "./theme-toggle";
 
 const Header = () => {
   const { userId } = useAuth();
 
   return (
     <header
-      className={cn("w-full border-b duration-150 transition-all ease-in-out")}
+      className={cn("sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-md duration-150 transition-all ease-in-out")}
     >
       <Container>
         <div className="flex items-center gap-4 w-full">
@@ -27,8 +28,8 @@ const Header = () => {
                 to={"/generate"}
                 className={({ isActive }) =>
                   cn(
-                    "text-base text-neutral-600",
-                    isActive && "text-neutral-900 font-semibold"
+                    "text-base text-muted-foreground hover:text-foreground transition-colors",
+                    isActive && "text-foreground font-semibold"
                   )
                 }
               >
@@ -37,7 +38,9 @@ const Header = () => {
             )}
           </nav>
 
-          <div className="ml-auto flex items-center gap-6">
+          <div className="ml-auto flex items-center gap-3 md:gap-4">
+            <ThemeToggle />
+
             {/* profile section */}
             <ProfileContainer />
 
