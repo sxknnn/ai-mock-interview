@@ -9,6 +9,9 @@ import { SignUpPage } from "./routes/sign-up";
 import ProtectedRoutes from "./layouts/protected-routes";
 
 import { MainLayout } from "@/layouts/main-layout";
+import GeneratePage from "@/routes/generate";
+import InterviewPage from "@/routes/interview";
+import FeedbackPage from "@/routes/feedback";
 
 
 const App = () => {
@@ -26,7 +29,9 @@ const App = () => {
         </Route>
          {/*Protected Route*/}
          <Route element={<ProtectedRoutes><MainLayout/></ProtectedRoutes>}>
-          
+          <Route path="/generate" element={<GeneratePage />} />
+          <Route path="/interview/:sessionId" element={<InterviewPage />} />
+          <Route path="/interview/:sessionId/feedback" element={<FeedbackPage />} />
          </Route>
       </Routes>
     </Router>

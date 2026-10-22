@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Interviewly API — Django REST Framework on Lambda (via Mangum), Gemini for
+  question generation/grading, DynamoDB for session storage. Everything here
+  is sized to stay inside AWS's Always-Free tier for a low-traffic demo.
+
+Parameters:
+  ClerkJwksUrl:
+    Type: String
+    Description: Clerk JWKS URL, e.g. https://<your-app>.clerk.accounts.dev/.well-known/jwks.json
+  ClerkIssuer:
+    Type: String
+    Description: Clerk Frontend API URL, e.g. https://<your-app>.clerk.accounts.dev
+  AllowedAzp:
+    Type: String
+    Description: Comma-separated list of allowed token `azp` values (your frontend origin(s)).
+    Default: ""
+  AllowedOrigin:
+    Type: String
+    Description: Frontend origin allowed by CORS on the Function URL.
+    Default: "http://localhost:5173"
+  GeminiApiKey:
+    Type: String
+    NoEcho: true
+  DjangoSecretKey:
+    Type: String
+    NoEcho: true
+  GeminiModel:
+    Type: String
+    Default: "gemini-3.8-flash"
+  GeminiFallbackModels:
+    Type: String
+    Description: Comma-separated models tried in order when GeminiModel is rate-limited or overloaded.
+    Default: "gemini-3.5-flash,gemini-3.1-flash-lite"
+
+Globals:
+  Function:
+    Runtime: python3.12
+    MemorySize: 512
+    Timeout: 30
+    Architectures: [x86_64]
+
+Resources:
+  InterviewlySessionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-sessions"
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      # Provisioned (not on-demand) and pinned at 5/5 — comfortably inside the
+      # Always-Free 25/25 RCU-WCU allowance. Throttles under unexpected load
+      # instead of silently billing for it.
+      BillingMode: PROVISIONED
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  InterviewlyApiFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${AWS::StackName}-api"
+      RetentionInDays: 14 # default retention is infinite — this is the real cost-creep vector
+
+  InterviewlyApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-api"
+      CodeUri: src/
+      Handler: config.lambda_handler.handler
+      Environment:
+        Variables:
+          DJANGO_SECRET_KEY: !Ref DjangoSecretKey
+          CLERK_JWKS_URL: !Ref ClerkJwksUrl
+          CLERK_ISSUER: !Ref ClerkIssuer
+          ALLOWED_AZP: !Ref AllowedAzp
+          DYNAMODB_TABLE_NAME: !Ref InterviewlySessionsTable
+          GEMINI_API_KEY: !Ref GeminiApiKey
+          GEMINI_MODEL: !Ref GeminiModel
+          GEMINI_FALLBACK_MODELS: !Ref GeminiFallbackModels
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InterviewlySessionsTable
+      FunctionUrlConfig:
+        AuthType: NONE # auth is enforced inside Django via Clerk JWT verification
+        Cors:
+          AllowOrigins:
+            - !Ref AllowedOrigin
+          AllowMethods: [GET, POST] # Lambda Function URLs handle OPTIONS preflight automatically
+          AllowHeaders: [authorization, content-type]
+          MaxAge: 300
+
+Outputs:
+  FunctionUrl:
+    Description: Live API base URL — set this as VITE_API_BASE_URL in the frontend.
+    Value: !GetAtt InterviewlyApiFunctionUrl.FunctionUrl # SAM generates <FunctionLogicalId>Url for FunctionUrlConfig
+  TableName:
+    Value: !Ref InterviewlySessionsTable

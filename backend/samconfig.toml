@@ -1,0 +1,12 @@
+version = 0.1
+
+[default.build.parameters]
+use_container = true
+
+[default.deploy.parameters]
+stack_name = "interviewly"
+region = "us-east-2"
+profile = "interviewly"
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
